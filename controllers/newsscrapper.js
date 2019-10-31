@@ -3,14 +3,16 @@ var axios = require("axios");
 var cheerio = require("cheerio");
 var Article = require("../models/Article.js");
 var Note = require("../models/Note.js");
-var router = express.Router();
-var request = require("request");
+
+// Initialize Express
+var app = express();
+
 
 
 // A GET route for scraping the echoJS website
-router.get("/scrape", function(req, res) {
+app.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
-    request("https://www.cpr.org/news/").then(function(response) {
+    axios.get("https://www.cpr.org/news/").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
   
@@ -94,4 +96,4 @@ router.get("/scrape", function(req, res) {
       });
   });
 
-module.exports = router;
+module.exports = app;
