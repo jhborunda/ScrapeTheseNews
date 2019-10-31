@@ -5,14 +5,15 @@ var Article = require("../models/Article.js");
 var Note = require("../models/Note.js");
 
 // Initialize Express
-var app = express();
+var router = express.Router();
 
+var db = require("../models");
 
 
 // A GET route for scraping the echoJS website
-app.get("/scrape", function(req, res) {
+router.get("/scrape", function(req, res) {
     // First, we grab the body of the html with axios
-    axios.get("https://www.cpr.org/news/").then(function(response) {
+    axios.get("http://www.echojs.com/").then(function(response) {
       // Then, we load that into cheerio and save it to $ for a shorthand selector
       var $ = cheerio.load(response.data);
   
@@ -47,7 +48,7 @@ app.get("/scrape", function(req, res) {
   });
   
   // Route for getting all Articles from the db
-  app.get("/articles", function(req, res) {
+  router.get("/articles", function(req, res) {
     // Grab every document in the Articles collection
     db.Article.find({})
       .then(function(dbArticle) {
@@ -61,7 +62,7 @@ app.get("/scrape", function(req, res) {
   });
   
   // Route for grabbing a specific Article by id, populate it with it's note
-  app.get("/articles/:id", function(req, res) {
+  router.get("/articles/:id", function(req, res) {
     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
     db.Article.findOne({ _id: req.params.id })
       // ..and populate all of the notes associated with it
@@ -77,7 +78,7 @@ app.get("/scrape", function(req, res) {
   });
   
   // Route for saving/updating an Article's associated Note
-  app.post("/articles/:id", function(req, res) {
+  router.post("/articles/:id", function(req, res) {
     // Create a new note and pass the req.body to the entry
     db.Note.create(req.body)
       .then(function(dbNote) {
@@ -96,4 +97,4 @@ app.get("/scrape", function(req, res) {
       });
   });
 
-module.exports = app;
+module.exports = router;

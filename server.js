@@ -2,8 +2,8 @@ var express = require("express");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var exphbs = require("express-handlebars");
+var bodyParser = require("body-parser");
 
-var PORT = 3000;
 
 // Initialize Express
 var app = express();
@@ -11,6 +11,11 @@ var app = express();
 //routing controllers
 var htmlRouter = require("./controllers/routes.js");
 var articleRouter = require("./controllers/newsscrapper.js");
+
+//parser with the app
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 // Initialize Handlebars
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
@@ -26,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
-
+var PORT = 3000;
 // Connect to the Mongo DB
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/news-scraper";
 
